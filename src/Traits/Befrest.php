@@ -172,7 +172,7 @@ trait Befrest {
         if(!isset($addr))
             throw new ApiException('Cant generate valid auth key: api address not defined yet!!!');
         $payload = self::base64Encode(hex2bin(md5(sprintf('%s,%s', $this->config['api_key'], $addr))));
-        return self::base64Encode(hex2bin(md5(sprintf('%s,%s', $this->config['sdk_version'], $payload))));
+        return self::base64Encode(hex2bin(md5(sprintf('%s,%s', $this->config['shared_key'], $payload))));
     }
 
     /**

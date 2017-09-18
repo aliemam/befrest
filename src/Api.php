@@ -10,6 +10,14 @@ class Api
 {
     use Befrest;
 
+    public $response;
+
+    /**
+     * Api constructor.
+     *
+     * @param null $config
+     * @throws ApiException
+     */
     public function __construct($config = null) {
         if(!isset($config))
             throw new ApiException('Cant generate Befrest Api Object: config not set yet!!!');
@@ -24,12 +32,12 @@ class Api
      * @return mixed
      * @throws ApiException
      */
-    public static function run($api_call, $message) {
+    public function run($api_call, $message) {
 
         $curl = curl_init($api_call['addr']);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $api_call['method']);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $api_call['headers']);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($message));
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $message);
         curl_exec($curl);
 
         $response = curl_exec($curl);
@@ -43,6 +51,7 @@ class Api
             throw new ApiException("Request has errors", $code);
         }
 
+        $this->response = $response;
         $res = json_decode($response, TRUE);
         if( isset($res['type']) && $res['type'] == 'error' ) {
             throw new ApiException($res['message'], '500');
@@ -50,6 +59,10 @@ class Api
 
         return $res;
 
+    }
+
+    public function getRawRes(){
+        return $this->response;
     }
 
 }
