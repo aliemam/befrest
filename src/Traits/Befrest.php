@@ -9,11 +9,12 @@
 namespace Befrest\Traits;
 
 use Befrest\Exceptions\ApiException;
-use function Sodium\add;
 
 
 trait Befrest {
 
+    public $config = null;
+    
     /**
      * @param       $chid
      * @param array $topics
@@ -22,10 +23,10 @@ trait Befrest {
      * this function is not for api providers just for talking 2 or more servers with each other you have to subscribe
      * your servers to befrest to let it downstream messages to your servers
      */
-    static function generateSubscribeApi($chid, $topics=[]){
-        $addr = '/xapi/'.Constants::API_VERSION.'/subscribe/'.Constants::UID.'/'.$chid.'/'.Constants::SDK_VERSION;
+    public function generateSubscribeApi($chid, $topics=[]){
+        $addr = '/xapi/'.$this->config['api_version'].'/subscribe/'.$this->config['uid'].'/'.$chid.'/'.$this->config['sdk_version'];
         return [
-            'addr' => Constants::API_ADDRESS.$addr,
+            'addr' => $this->config['api_address'].$addr,
             'headers' => [
                 'X-BF-AUTH: '.self::generateAuth($addr),
                 'X-BF-TOPICS: all-'.join('-', $topics)
@@ -40,12 +41,12 @@ trait Befrest {
      * @return mixed ارسال پیام به کانال
      * ارسال پیام به کانال
      */
-    static function generatePublishToChannelApi($chid, $hours=240){
+    public function generatePublishToChannelApi($chid, $hours=240){
         if($hours > 336)
             $hours = 336;
-        $addr = '/xapi/'.Constants::API_VERSION.'/publish/'.Constants::UID.'/'.$chid;
+        $addr = '/xapi/'.$this->config['api_version'].'/publish/'.$this->config['uid'].'/'.$chid;
         return [
-            'addr' => Constants::API_ADDRESS.$addr,
+            'addr' => $this->config['api_address'].$addr,
             'headers' => [
                 'X-BF-AUTH: '.self::generateAuth($addr),
                 'X-BF-TTL: '.($hours*60*60)
@@ -59,10 +60,10 @@ trait Befrest {
      * @return mixed
      * بررسی وضعیت پیام
      */
-    static function generatePublishToChannelStatusApi($mid){
-        $addr = '/xapi/'.Constants::API_VERSION.'/message-status/'.Constants::UID.'/'.$mid;
+    public function generatePublishToChannelStatusApi($mid){
+        $addr = '/xapi/'.$this->config['api_version'].'/message-status/'.$this->config['uid'].'/'.$mid;
         return [
-            'addr' => Constants::API_ADDRESS.$addr,
+            'addr' => $this->config['api_address'].$addr,
             'headers' => [
                 'X-BF-AUTH: '.self::generateAuth($addr),
             ],
@@ -76,13 +77,13 @@ trait Befrest {
      * @return mixed ارسال پیام گروهی
      * ارسال پیام گروهی
      */
-    static function generateMultiPublishApi($chids=[], $hours=240){
+    public function generateMultiPublishApi($chids=[], $hours=240){
         if($hours > 336)
             $hours = 336;
 
-        $addr = '/xapi/'.Constants::API_VERSION.'/multi-publish/'.Constants::UID;
+        $addr = '/xapi/'.$this->config['api_version'].'/multi-publish/'.$this->config['uid'];
         return [
-            'addr' => Constants::API_ADDRESS.$addr,
+            'addr' => $this->config['api_address'].$addr,
             'headers' => [
                 'X-BF-AUTH: '.self::generateAuth($addr),
                 'X-BF-TTL: '.($hours*60*60),
@@ -97,13 +98,13 @@ trait Befrest {
      * @return mixed
      * ارسال پیام تاپیک
      */
-    static function generatePublishToTopicApi($topic, $hours=240){
+    public function generatePublishToTopicApi($topic, $hours=240){
         if($hours > 336)
             $hours = 336;
 
-        $addr = '/xapi/'.Constants::API_VERSION.'/t-publish/'.Constants::UID.'/'.$topic;
+        $addr = '/xapi/'.$this->config['api_version'].'/t-publish/'.$this->config['uid'].'/'.$topic;
         return [
-            'addr' => Constants::API_ADDRESS.$addr,
+            'addr' => $this->config['api_address'].$addr,
             'headers' => [
                 'X-BF-AUTH: '.self::generateAuth($addr),
                 'X-BF-TEXP: '.($hours*60*60)
@@ -118,10 +119,10 @@ trait Befrest {
      * @return mixed
      * بررسی وضعیت پیام تاپیک
      */
-    static function generatePublishToTopicStatusApi($topic, $mid){
-        $addr = '/xapi/'.Constants::API_VERSION.'/topic-msg-status/'.Constants::UID.'/'.$topic.'/'.$mid;
+    public function generatePublishToTopicStatusApi($topic, $mid){
+        $addr = '/xapi/'.$this->config['api_version'].'/topic-msg-status/'.$this->config['uid'].'/'.$topic.'/'.$mid;
         return [
-            'addr' => Constants::API_ADDRESS.$addr,
+            'addr' => $this->config['api_address'].$addr,
             'headers' => [
                 'X-BF-AUTH: '.self::generateAuth($addr),
             ],
@@ -134,10 +135,10 @@ trait Befrest {
      * @return mixed
      * بررسی وضعیت تاپیک
      */
-    static function generateTopicStatusApi($topic){
-        $addr = '/xapi/'.Constants::API_VERSION.'/topic-status/'.Constants::UID.'/'.$topic;
+    public function generateTopicStatusApi($topic){
+        $addr = '/xapi/'.$this->config['api_version'].'/topic-status/'.$this->config['uid'].'/'.$topic;
         return [
-            'addr' => Constants::API_ADDRESS.$addr,
+            'addr' => $this->config['api_address'].$addr,
             'headers' => [
                 'X-BF-AUTH: '.self::generateAuth($addr),
             ],
@@ -150,10 +151,10 @@ trait Befrest {
      * @return mixed
      * بررسی وضعیت کانال
      */
-    static function generateChannelStatusApi($chid){
-        $addr = '/xapi/'.Constants::API_VERSION.'/channel-status/'.Constants::UID.'/'.$chid;
+    public function generateChannelStatusApi($chid){
+        $addr = '/xapi/'.$this->config['api_version'].'/channel-status/'.$this->config['uid'].'/'.$chid;
         return [
-            'addr' => Constants::API_ADDRESS.$addr,
+            'addr' => $this->config['api_address'].$addr,
             'headers' => [
                 'X-BF-AUTH: '.self::generateAuth($addr),
             ],
@@ -167,11 +168,11 @@ trait Befrest {
      * generate auth for given path
      * @throws ApiException
      */
-    static function generateAuth($addr = null) {
+    public function generateAuth($addr = null) {
         if(!isset($addr))
             throw new ApiException('Cant generate valid auth key: api address not defined yet!!!');
-        $payload = self::base64Encode(hex2bin(md5(sprintf('%s,%s', Constants::API_KEY, $addr))));
-        return self::base64Encode(hex2bin(md5(sprintf('%s,%s', Constants::SDK_VERSION, $payload))));
+        $payload = self::base64Encode(hex2bin(md5(sprintf('%s,%s', $this->config['api_key'], $addr))));
+        return self::base64Encode(hex2bin(md5(sprintf('%s,%s', $this->config['sdk_version'], $payload))));
     }
 
     /**

@@ -10,6 +10,12 @@ class Api
 {
     use Befrest;
 
+    public function __construct($config = null) {
+        if(!isset($config))
+            throw new ApiException('Cant generate Befrest Api Object: config not set yet!!!');
+        $this->config = $config;
+    }
+
     /**
      * this function executes api call and retrieves result
      *
