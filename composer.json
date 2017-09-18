@@ -1,0 +1,21 @@
+{
+    "name": "aliemam/befrest",
+    "type": "library",
+    "description": "A php library for befrest.",
+    "keywords": ["befrest api", "push api"],
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "Ali Emamhadi, Yab Co. Team",
+            "email": "aliemamhadi@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "aliemam\\befrest\\": "src/"
+        }
+    }
+}
