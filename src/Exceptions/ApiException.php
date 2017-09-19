@@ -1,6 +1,6 @@
 <?php
 
-namespace Befrest\Exceptions;
+namespace Aliemam\Befrest\Exceptions;
 
 class ApiException extends \Exception
 {

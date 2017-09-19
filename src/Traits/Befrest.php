@@ -6,9 +6,9 @@
  * Time: 2:51 PM
  */
 
-namespace Befrest\Traits;
+namespace Aliemam\Befrest\Traits;
 
-use Befrest\Exceptions\ApiException;
+use Aliemam\Befrest\Exceptions\ApiException;
 
 
 trait Befrest {
