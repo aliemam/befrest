@@ -1,10 +1,10 @@
 <?php
 
 
-namespace Aliemam\Befrest;
+namespace Befrest;
 
-use Aliemam\Befrest\Exceptions\ApiException;
-use Aliemam\Befrest\Traits\Befrest;
+use Befrest\Exceptions\ApiException;
+use Befrest\Traits\Befrest;
 
 class Api
 {
